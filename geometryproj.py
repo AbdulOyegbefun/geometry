@@ -51,34 +51,95 @@ class Point (object):
 class Sphere (object):
   # constructor with default values
   def __init__ (self, x = 0, y = 0, z = 0, radius = 1):
-    return None
+    self.center = Point(x,y,z)
+    self.radius = float(radius)
   # returns string representation of a Sphere of the form:
   # Center: (x, y, z), Radius: value
   def __str__ (self):
-    return None
+    return f'Center: ({str(self.center.x)}, {str(self.center.y)}, {str(self.center.z)}), Radius: {str(self.radius)}'
   # compute surface area of Sphere
   # returns a floating point number
   def area (self):
-    return None
+    return 4*math.pi*(self.radius**2)
   # compute volume of a Sphere
   # returns a floating point number
   def volume (self):
-    return None
+    return (4/3)*math.pi*(self.radius**3)
   # determines if a Point is strictly inside the Sphere
   # p is Point object
   # returns a Boolean
   def is_inside_point (self, p):
-    return None
+    return self.center.distance(p) < self.radius
+  def is_outside_point (self,p):
+    return self.center.distance(p) > self.radius
   # determine if another Sphere is strictly inside this Sphere
   # other is a Sphere object
   # returns a Boolean
   def is_inside_sphere (self, other):
-    return None
+    R = [-other.radius,other.radius]
+    a=0
+    b=0
+    c=0
+    for i in R:
+        a = i + other.center.x
+        b = other.center.y
+        c = other.center.z
+        spherical_corner = Point(a,b,c)
+        #print(spherical_corner)
+        if not self.is_inside_point(spherical_corner):
+            return False
+    for j in R:
+        a = other.center.x
+        b = j + other.center.y
+        c = other.center.z
+        spherical_corner = Point(a,b,c)
+        #print(spherical_corner)
+        if not self.is_inside_point(spherical_corner):
+            return False
+    for k in R:
+        a = other.center.x
+        b = other.center.y
+        c = k + other.center.z
+        spherical_corner = Point(a,b,c)
+        #print(spherical_corner)
+        if not self.is_inside_point(spherical_corner):
+            return False
+    return True
   # determine if a Cube is strictly inside this Sphere
   # determine if the eight corners of the Cube are strictly 
   # inside the Sphere
   # a_cube is a Cube object
   # returns a Boolean
+  def is_outside_sphere (self, other):
+    R = [-other.radius,other.radius]
+    a=0
+    b=0
+    c=0
+    for i in R:
+        a = i + other.center.x
+        b = other.center.y
+        c = other.center.z
+        spherical_corner = Point(a,b,c)
+        #print(spherical_corner)
+        if not self.is_outside_point(spherical_corner):
+            return False
+    for j in R:
+        a = other.center.x
+        b = j + other.center.y
+        c = other.center.z
+        spherical_corner = Point(a,b,c)
+        #print(spherical_corner)
+        if not self.is_outside_point(spherical_corner):
+            return False
+    for k in R:
+        a = other.center.x
+        b = other.center.y
+        c = k + other.center.z
+        spherical_corner = Point(a,b,c)
+        #print(spherical_corner)
+        if not self.is_outside_point(spherical_corner):
+            return False
+    return True  
   def is_inside_cube (self, a_cube):
     return None
   # determine if another Sphere intersects this Sphere
@@ -87,7 +148,7 @@ class Sphere (object):
   # or not strictly outside each other
   # returns a Boolean
   def does_intersect_sphere (self, other):
-    return None
+    return  not (self.is_inside_sphere(other)) and not (self.is_outside_sphere(other))
   # determine if a Cube intersects this Sphere
   # the Cube and Sphere intersect if they are not
   # strictly inside or not strictly outside the other
@@ -196,7 +257,33 @@ class Cylinder (object):
     return None
 def main():
   # read data from standard input
-  
+  sphere_A = Sphere()
+  sphere_A.center=Point(0,0,0)
+  sphere_A.radius=4
+
+  sphere_B = Sphere()
+  sphere_B.center=Point(3,0,0)
+  sphere_B.radius=.5
+
+  sphere_C = Sphere()
+  sphere_C.center=Point(7,0,0)
+  sphere_C.radius=2
+
+  sphere_D = Sphere()
+  sphere_D.center=Point(1,1,1)
+  sphere_D.radius=4
+
+  #print(sphere_A.area(),\
+  #sphere_B.area(),\
+  #sphere_A.volume(),\
+  #sphere_B.volume()
+  #)
+  p=Point(1,0,0)
+  q=Point(3,3,3)
+  print(sphere_A.does_intersect_sphere(sphere_B))
+  print(sphere_A.does_intersect_sphere(sphere_C))
+  print(sphere_A.does_intersect_sphere(sphere_D))
+  #print(sphere_A.is_inside_sphere(sphere_B))
   # read the coordinates of the first Point p
 
   # create a Point object 
