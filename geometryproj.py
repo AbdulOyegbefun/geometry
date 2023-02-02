@@ -26,22 +26,28 @@ os.system('cls')
 class Point (object):
   # constructor with default values
   def __init__ (self, x = 0, y = 0, z = 0):
-    return None
-
+    self.x = float(x)
+    self.y = float(y)
+    self.z = float(z)
   # create a string representation of a Point
   # returns a string of the form (x, y, z)
   def __str__ (self):
-    return None
+    return f'({str(self.x)}, {str(self.y)}, {str(self.z)})'
   # get distance to another Point object
   # other is a Point object
   # returns the distance as a floating point number
   def distance (self, other):
-    return None
+    return math.hypot(self.x - other.x, self.y - other.y, self.z - other.z)
   # test for equality between two points
   # other is a Point object
   # returns a Boolean
   def __eq__ (self, other):
-    return None
+    tol = 1.0e-6
+    return (
+        (abs(self.x - other.x) < tol) and \
+        (abs(self.y - other.y) < tol) and \
+        (abs(self.z - other.z) < tol)
+        )
 class Sphere (object):
   # constructor with default values
   def __init__ (self, x = 0, y = 0, z = 0, radius = 1):
@@ -190,7 +196,7 @@ class Cylinder (object):
     return None
 def main():
   # read data from standard input
-    return None
+  
   # read the coordinates of the first Point p
 
   # create a Point object 
