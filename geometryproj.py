@@ -148,7 +148,7 @@ class Sphere (object):
   # or not strictly outside each other
   # returns a Boolean
   def does_intersect_sphere (self, other):
-    return  not (self.is_inside_sphere(other)) and not (self.is_outside_sphere(other))
+    return  not (self.is_inside_sphere(other) or other.is_inside_sphere(self)) and not (self.is_outside_sphere(other) or other.is_outside_sphere(self))
   # determine if a Cube intersects this Sphere
   # the Cube and Sphere intersect if they are not
   # strictly inside or not strictly outside the other
@@ -167,41 +167,111 @@ class Cube (object):
   # and side. The faces of the Cube are parallel to x-y, y-z,
   # and x-z planes.
   def __init__ (self, x = 0, y = 0, z = 0, side = 1):
-    return None
+    self.center = Point(x,y,z)
+    self.side = float(side)
   # string representation of a Cube of the form: 
   # Center: (x, y, z), Side: value
   def __str__ (self):
-    return None
+    return f'Center: ({str(self.center.x)}, {str(self.center.y)}, {str(self.center.z)}), Side: {str(self.side)}'
   # compute the total surface area of Cube (all 6 sides)
   # returns a floating point number
   def area (self):
-    return None
+    return 6*(self.side**2)
   # compute volume of a Cube
   # returns a floating point number
   def volume (self):
-    return None
+    return self.side**3
   # determines if a Point is strictly inside this Cube
   # p is a point object
   # returns a Boolean
   def is_inside_point (self, p):
-    return None
+    return\
+        ((abs(p.x - self.center.x)) < (self.side/2 )) and\
+        ((abs(p.y - self.center.y)) < (self.side/2 )) and\
+        ((abs(p.z - self.center.z)) < (self.side/2 ))
+  def is_outside_point (self, p):
+    return\
+        ((abs(p.x - self.center.x)) > (self.side/2 )) or\
+        ((abs(p.y - self.center.y)) > (self.side/2 )) or\
+        ((abs(p.z - self.center.z)) > (self.side/2 ))
+
   # determine if a Sphere is strictly inside this Cube 
   # a_sphere is a Sphere object
   # returns a Boolean
   def is_inside_sphere (self, a_sphere):
-    return None
+    R = [-a_sphere.radius,a_sphere.radius]
+    a=0
+    b=0
+    c=0
+    for i in R:
+        a = i + a_sphere.center.x
+        b = a_sphere.center.y
+        c = a_sphere.center.z
+        spherical_corner = Point(a,b,c)
+        #print(spherical_corner)
+        if not self.is_inside_point(spherical_corner):
+            return False
+    for j in R:
+        a = a_sphere.center.x
+        b = j + a_sphere.center.y
+        c = a_sphere.center.z
+        spherical_corner = Point(a,b,c)
+        #print(spherical_corner)
+        if not self.is_inside_point(spherical_corner):
+            return False
+    for k in R:
+        a = a_sphere.center.x
+        b = a_sphere.center.y
+        c = k + a_sphere.center.z
+        spherical_corner = Point(a,b,c)
+        #print(spherical_corner)
+        if not self.is_inside_point(spherical_corner):
+            return False
+    return True
   # determine if another Cube is strictly inside this Cube
   # other is a Cube object
   # returns a Boolean
   def is_inside_cube (self, other):
-    return None
+    L = [-other.side/2,other.side/2]
+    for i in L:
+        for j in L:
+            for k in L:
+                a=i+other.center.x
+                b=j+other.center.y
+                c=k+other.center.z
+                other_cube_corner = Point(a,b,c)
+                #print(other_cube_corner)
+                if not self.is_inside_point(other_cube_corner):
+                    return False
+    
+    return True
+  
+  def is_outside_cube (self, other):
+    L = [-other.side/2,other.side/2]
+    for i in L:
+        for j in L:
+            for k in L:
+                a=i+other.center.x
+                b=j+other.center.y
+                c=k+other.center.z
+                other_cube_corner = Point(a,b,c)
+                #print(other_cube_corner)
+                if not self.is_outside_point(other_cube_corner):
+                    return False
+        return True
+
+
   # determine if another Cube intersects this Cube
   # two Cube objects intersect if they are not strictly
   # inside and not strictly outside each other
   # other is a Cube object
   # returns a Boolean
   def does_intersect_cube (self, other):
-    return None
+    print(f'These cubes are strictly inside: {self.is_inside_cube(other) or other.is_inside_cube(self)}')
+    print(f'These cubes are strictly outside: {self.is_outside_cube(other) or other.is_outside_cube(self)}')
+    print(f'Thes cubes interect:')
+    return  not (self.is_inside_cube(other) or other.is_inside_cube(self)) and not \
+        (self.is_outside_cube(other) or other.is_outside_cube(self))
   # determine the volume of intersection if this Cube 
   # intersects with another Cube
   # other is a Cube object
@@ -214,7 +284,10 @@ class Cube (object):
   # Cube are tangential planes of the Sphere
   # returns a Sphere object
   def inscribe_sphere (self):
-    return None
+    a_sphere = Sphere()
+    a_sphere.center = self.center
+    a_sphere.radius = self.side
+    return a_sphere
 class Cylinder (object):
   # Cylinder is defined by its center (which is a Point object),
   # radius and height. The main axis of the Cylinder is along the
@@ -258,32 +331,43 @@ class Cylinder (object):
 def main():
   # read data from standard input
   sphere_A = Sphere()
-  sphere_A.center=Point(0,0,0)
-  sphere_A.radius=4
-
+  sphere_A.center=Point(1,2,3)
+  sphere_A.radius=3.99
+  
   sphere_B = Sphere()
-  sphere_B.center=Point(3,0,0)
-  sphere_B.radius=.5
+  sphere_B.center=Point()
+  sphere_B.radius=4
 
-  sphere_C = Sphere()
-  sphere_C.center=Point(7,0,0)
-  sphere_C.radius=2
+  cubeA = Cube()
+  cubeB = Cube()
+  cubeC = Cube()
 
-  sphere_D = Sphere()
-  sphere_D.center=Point(1,1,1)
-  sphere_D.radius=4
+  cubeA.center=Point(0,0,0)
+  cubeA.side = 6
 
-  #print(sphere_A.area(),\
-  #sphere_B.area(),\
-  #sphere_A.volume(),\
-  #sphere_B.volume()
-  #)
-  p=Point(1,0,0)
-  q=Point(3,3,3)
-  print(sphere_A.does_intersect_sphere(sphere_B))
-  print(sphere_A.does_intersect_sphere(sphere_C))
-  print(sphere_A.does_intersect_sphere(sphere_D))
-  #print(sphere_A.is_inside_sphere(sphere_B))
+  cubeB.center = Point(6,6,6)
+  cubeB.side = 1
+
+  cubeC.center = Point(0,0,0)
+  cubeC.side = 10
+  p = Point(0,0,5)
+  q = Point(0,5,0)
+  r = Point(5,0,0)
+
+  p2 = Point(0,0,4.99)
+  q2= Point(0,4.99,0)
+  r2 = Point(4.99,0,0)
+
+  #print(cubeA.does_intersect_cube(cubeA))
+  #^^^This print does something weird. Is this
+  # a floating point value problem
+
+  #print(cubeA.does_intersect_cube(cubeB))
+  #print(cubeA.does_intersect_cube(cubeC))
+  #print(cubeA.is_inside_cube(cubeC))
+  #print(cubeA.is_outside_cube(cubeC))
+
+  
   # read the coordinates of the first Point p
 
   # create a Point object 
